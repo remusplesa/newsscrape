@@ -88,14 +88,6 @@ def get_from_digi():
             print('\n Titlu:' + title,'\n Link:',link,'\n Tldr:',tldr,'\n Publish Date:',publish_date ,'\n')
 
 
-content = 'Liviu Voiculescu, primarul comunei Cungrea, județul Olt, a distribuit localnicilor Paști și anafură de la biserică în cutii pe care era inscripționat numele său. \
-        Liviu Voiculescu vrea să candideze pentru funcția de edil al Slatinei. Pe cutiile cu pască și anafură împărțite cetățenilor comunei Cungrea este inscripționat \
-        “Plic oferit de Primăria Cungrea/ Primar, Liviu Voiculescu”. Însă conținutul ambalajelor este de la biserică.  Liviu Voiculescu, președinte al PNL Olt, vrea să \
-        intre în cursa de la locale pentru Primăria Slatina. Voiculescu este inculpat, într-un dosar trimis în judecată, pentru constituire sau aderare la un grup infracţional\
-        organizat, conflict de interese, organizarea şi desfăşurarea de activităţi ilicite în domeniul jocurilor de noroc. Acesta a declarat, pentru presa locală, că procesul\
-        nu îl va afecta în contextul în care va candida pentru o funcție publică, „pentru că oamenii știu adevărul”. Redactor: Alexandru Costea'
-
-
 doc_to_es = {
     "id": "",           #encode the news title+date for id? // later check if id already exists
     "source": "",       #link to redirect the user to
@@ -108,4 +100,3 @@ doc_to_es = {
 }
 
 get_from_digi()
-

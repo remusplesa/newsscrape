@@ -1,35 +1,42 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Body
 import pymongo
 from pymongo import MongoClient
+from bson.objectid import ObjectId
 from bson.json_util import dumps
+from pydantic import BaseModel, Field, validator
+from datetime import datetime
 
 app = FastAPI()
-
-mock_data  = [
-    {
-    "id": 123,           #encode the news title+date for id? // later check if id already exists
-    "source": "www.digi.ro",       #link to redirect the user to
-    "publish_date": "12.03.2020", #article publish date
-    "title": "Abc Defghij klmnopqrstuv wxyz",        #article title
-    "img_src": "trhrhtrth",      #article original thumbnail photo
-    "tldr": "dfbnvdfjkbvkdfjnbdkfbnkdfjdfb gfbdfkjbvndajkbdajfbnkdjfbv fjdkbvnkjdfabnkadbfkdfjbv dfkjbvjbvadkjfbkdfb",         #processed article content (contains only 5 sentences from the original)
-    "biased": "0.2",       #to decide -> calculate some metric of the objectivity of the content
-    "clicks": 12        #count no. of article clicks 
-},
-{
-    "id": 123,           #encode the news title+date for id? // later check if id already exists
-    "source": "www.digi.ro",       #link to redirect the user to
-    "publish_date": "12.03.2020", #article publish date
-    "title": "Abc Defghij klmnopqrstuv wxyz",        #article title
-    "img_src": "trhrhtrth",      #article original thumbnail photo
-    "tldr": "dfbnvdfjkbvkdfjnbdkfbnkdfjdfb gfbdfkjbvndajkbdajfbnkdjfbv fjdkbvnkjdfabnkadbfkdfjbv dfkjbvjbvadkjfbkdfb",         #processed article content (contains only 5 sentences from the original)
-    "biased": "0.2",       #to decide -> calculate some metric of the objectivity of the content
-    "clicks": 2        #count no. of article clicks 
-}]
-
 client = MongoClient('mongodb://localhost:27017/')
 db = client.newsApp
 articles = db.articles
+
+class Article(BaseModel):
+    source: str = Field(..., description='Article source')
+    publish_date: str
+    title: str = Field(...)
+    img_source: str = Field(None, description='Image source')
+    tldr: str = Field(..., description='Article body')
+    bias: float = Field(None, gt=0, le=1, description='Bias of the news article')
+    clicks: int = 0
+
+    """
+    @validator('source')
+    def source_is_ok(cls, v):
+        for source in ['digi24', 'realitatea', 'protv', 'mediafax']:
+            if source not in v:
+                return ValueError('Source not accepted')
+        return v
+        
+    @validator(publish_date)
+    def date_is_ok(cls, v):
+        datetime.strptime(v, '%d.%m%y %H:%M')
+    """
+
+
+class Tldr(BaseModel):
+    sentences: int = Field(..., gt=0, description='Number of sentences to be returned')
+    text: str = Field(..., max_length=1000, description='Original text limited to ~2 pages (1000 words)')
 
 
 @app.get('/')
@@ -78,27 +85,28 @@ def get_articles(pageNumber: int = 0, limit: int = 10):
     }
 
 
-@app.post('/articles/{article_id}')
-def post_article(id):
+@app.post('/articles/')
+def post_article(article: Article=Body(...)):
     """
-    # TODO: validate object with pydantic !!??
-    # TODO: insert the doc in the db
+    Insert a new document in the db after object validation.
     """
-    pass
+    res = articles.insert_one(article.dict())
+    return {"inserted": str(res.inserted_id)}
 
 
 @app.put('/articles/{article_id}')
-def uptdate_article(article_id: int, value: int = None):
+def uptdate_article(article_id: str):
     """
-    # TODO: Increment the click count of an article
+    # Increment the click count of an article
     """
-    #articles.update_one
-    return {'updated_article' : article_id}
+    res = articles.update_one({"_id": ObjectId(article_id)}, {"$inc": {"clicks": 1}})
+    return {'updated_article' : res.raw_result}
 
 
 @app.get('/tldr')
-def tldr(text: str):
+def tldr(text: Tldr=Body(...)):
     """
     # TODO: Return a Tldr for any posted(?) text
     """
+
     pass
