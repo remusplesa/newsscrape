@@ -13,7 +13,7 @@ client = MongoClient('mongodb://localhost:27017/')
 db = client.newsApp
 articles = db.articles
 
-def process_content(text):
+def process_content(text: str, len: int = 4):
     words = word_tokenize(text)
     new_words= [word for word in words if word.isalnum()]
     new_content= [word for word in new_words if word not in stopwords.words('romanian')]
@@ -34,7 +34,7 @@ def process_content(text):
         words = s.split(' ')
         for word in words:
             if word in best:
-                if s not in short and len(short) < 4:
+                if s not in short and len(short) <= len:
                     short.append(org_sentence[i]+'.')
                     
     tldr=' '.join(short)

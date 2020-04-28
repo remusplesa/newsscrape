@@ -5,6 +5,9 @@ from bson.objectid import ObjectId
 from bson.json_util import dumps
 from pydantic import BaseModel, Field, validator
 from datetime import datetime
+import sys
+sys.path.append('..')
+from tldr.tldr import process_content
 
 app = FastAPI()
 client = MongoClient('mongodb://localhost:27017/')
@@ -13,7 +16,7 @@ articles = db.articles
 
 class Article(BaseModel):
     source: str = Field(..., description='Article source')
-    publish_date: str
+    publish_date: datetime
     title: str = Field(...)
     img_source: str = Field(None, description='Image source')
     tldr: str = Field(..., description='Article body')
@@ -30,7 +33,7 @@ class Article(BaseModel):
         
     @validator(publish_date)
     def date_is_ok(cls, v):
-        datetime.strptime(v, '%d.%m%y %H:%M')
+        datetime.strptime(v, '%d.%m%y %H:%M') + strftime
     """
 
 
@@ -103,10 +106,10 @@ def uptdate_article(article_id: str):
     return {'updated_article' : res.raw_result}
 
 
-@app.get('/tldr')
-def tldr(text: Tldr=Body(...)):
+@app.post('/tldr')
+def to_tldr(text: Tldr=Body(...)):
     """
     # TODO: Return a Tldr for any posted(?) text
     """
-
-    pass
+    out = process_content(text.text, text.sentences)
+    return {"tldr": out}
