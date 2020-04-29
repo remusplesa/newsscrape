@@ -101,6 +101,7 @@ def post_article(article: Article=Body(...)):
 def uptdate_article(article_id: str):
     """
     # Increment the click count of an article
+    # TODO: Increment the report count
     """
     res = articles.update_one({"_id": ObjectId(article_id)}, {"$inc": {"clicks": 1}})
     return {'updated_article' : res.raw_result}

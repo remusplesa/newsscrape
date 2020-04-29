@@ -20,4 +20,31 @@ def test_root():
     res_keys = list(dict(response.json()).keys())
     assert res_keys == ok_keys
 
-    
+
+def test_get_articles():
+    response = client.get('/articles')
+    assert response.status_code == 200
+    #TODO: no previous page in response for first page
+    #TODO: no next page in response for last page
+    #TODO: length of response == limit
+
+
+def test_put_articles():
+    #TODO: check if click increment works
+    #TODO: check if report increment works
+    #TODO: check if article is hidden after x reports
+    #TODO: check error handling
+    pass
+
+
+def test_post_articles():
+    #TODO: validate the body structure
+    #TODO: error handling
+    pass
+
+
+def test_post_tldr():
+    #TODO: validate request body
+    #TODO: validate response body
+    #TODO: validate response body.text == req.sentences
+    pass
