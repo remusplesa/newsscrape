@@ -1,0 +1,11 @@
+fastapi
+uvicorn
+tornado
+motor
+nltk
+pydantic
+pymongo
+starlette==0.13.2
+pylint
+pytest
+requests

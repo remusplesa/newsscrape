@@ -7,7 +7,7 @@ from pydantic import BaseModel, Field, validator
 from datetime import datetime
 import sys
 sys.path.append('..')
-from tldr.tldr import process_content
+from tldr.short_tldr import process_content
 
 app = FastAPI()
 client = MongoClient('mongodb://localhost:27017/')
