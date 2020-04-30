@@ -1,4 +1,5 @@
 from fastapi import FastAPI, Body
+from fastapi.middleware.cors import CORSMiddleware
 import pymongo
 from pymongo import MongoClient
 from bson.objectid import ObjectId
@@ -9,14 +10,27 @@ import sys
 sys.path.append('..')
 from tldr.short_tldr import process_content
 
+
 app = FastAPI()
+origins = [
+    "http://localhost:3000",
+    "http://localhost:8080",
+]
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 client = MongoClient('mongodb://localhost:27017/')
 db = client.newsApp
 articles = db.articles
 
 class Article(BaseModel):
     source: str = Field(..., description='Article source')
-    publish_date: datetime
+    publish_date: str
     title: str = Field(...)
     img_source: str = Field(None, description='Image source')
     tldr: str = Field(..., description='Article body')
