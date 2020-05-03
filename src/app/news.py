@@ -35,7 +35,11 @@ class Article(BaseModel):
     img_source: str = Field(None, description='Image source')
     tldr: str = Field(..., description='Article body')
     bias: float = Field(None, gt=0, le=1, description='Bias of the news article')
-    clicks: int = 0
+    clicks: int
+    reports: int
+    hidden: bool
+    collection_date: str
+
 
     """
     @validator('source')

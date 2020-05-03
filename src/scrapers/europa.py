@@ -4,15 +4,14 @@ from datetime import datetime
 import sys
 sys.path.append('..')
 from tldr.short_tldr import process_content
-from article import Article
 
-def get_from_digi():
-    website_address = 'https://www.digi24.ro/ultimele-stiri'
-    # 50 articles per page
+def get_from_europa():
+    website_address = 'https://ec.europa.eu/romania/news_ro'
+    # 10 articles per page
     website = requests.get(website_address, 'html/parse')
 
     soup = BeautifulSoup(website.content, features='html.parser', from_encoding="utf-8")
-    articles = soup.find_all('article', class_='article brdr')
+    articles = soup.find_all('div', class_='reps_news_events_wrapper')
 
     if len(articles) == 0:
         print('No articles found')
@@ -22,7 +21,7 @@ def get_from_digi():
         page_articles = []
 
         for article in articles:
-            title = str(article.select('.article-title')[0].get_text())
+            title = str(article.find('a').get_text())
             title = title.replace('&period', '.')\
                 .replace('&comma',  ',')\
                 .replace('&abreve', 'ă')\
@@ -35,31 +34,26 @@ def get_from_digi():
                 .replace('&vert', '|')\
                 .strip()
 
-            link = 'https://www.digi24.ro'+str(article.find('a', href=True).attrs['href'])
+            link = 'https://ec.europa.eu/'+str(article.find('a', href=True).attrs['href'])
 
             content_page = requests.get(link, 'html/parse')
             content = BeautifulSoup(content_page.content, features='html.parser')
 
+            article_area = content.find('div', {'class': 'panel-body content'})
 
-            thumb = content.find('figure', {'class': 'article-thumb'}).find('img', src=True).attrs['src']
+            thumb = article_area.find('img', src=True).attrs['src']
 
             article_content = ''
-            for c in content.find_all('p'):
-                article_content += ' ' + c.get_text().strip()
+            for p in article_area.find_all('p'):
+                article_content += ' ' + p.get_text().strip()
 
             tldr = process_content(article_content, 3)
             if len(tldr) > 255:
                 tldr = tldr[:255] + '...'
 
-            publish_date = content.find('time').get_text().strip()
-            #publish_date = datetime.strptime(publish_date, '%d.%m.%Y %H:%M')
-
-            #insert_doc({"source":link, "publish_date": publish_date, "title": title, "img_source": "none", "tldr": tldr, "biased": 0, "clicks": 0})
-            #print('\n Titlu:' + title,'\nThumb: ',thumb,'\n Link:',link,'\n Tldr:',tldr,'\n Publish Date:',publish_date ,'\n')
-
-            page_articles.append(Article(link, publish_date, title, thumb, tldr, 0.1))
-
-            """page_articles.append({
+            publish_date = article_area.find('span', {'class': 'date-display-single'}).get_text().strip()
+            
+            page_articles.append({
                  "source": link,
                  "publish_date": publish_date, 
                  "title": title, 
@@ -67,11 +61,8 @@ def get_from_digi():
                  "tldr": tldr, 
                  "bias": 0.1,
                  "clicks": 0
-                })"""
+                })
     
     return page_articles
-"""
-abc = get_from_digi()
 
-for art in abc:
-    print(vars(art))"""
+#get_from_europa()

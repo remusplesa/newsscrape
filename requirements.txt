@@ -3,9 +3,11 @@ uvicorn
 tornado
 motor
 nltk
+#nltk.download('punkt'&'stopwords')
 pydantic
 pymongo
 starlette==0.13.2
 pylint
 pytest
 requests
+beautifulsoup4

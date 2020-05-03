@@ -19,7 +19,7 @@ def scrape():
         response= requests.post(
             url,
             headers={"Content-Type": "application/json"},
-            json=article
+            json= vars(article)
             )
         print(response)
 scrape()
