@@ -3,15 +3,16 @@ from bs4 import BeautifulSoup
 from datetime import datetime
 import sys
 sys.path.append('..')
-from tldr.short_tldr import process_content
+from api.app.tldr.short_tldr import process_content
+from article import Article
 
-def get_from_europa():
-    website_address = 'https://ec.europa.eu/romania/news_ro'
-    # 10 articles per page
+def get_from_digi():
+    website_address = 'https://www.digi24.ro/ultimele-stiri'
+    # 50 articles per page
     website = requests.get(website_address, 'html/parse')
 
     soup = BeautifulSoup(website.content, features='html.parser', from_encoding="utf-8")
-    articles = soup.find_all('div', class_='reps_news_events_wrapper')
+    articles = soup.find_all('article', class_='article brdr')
 
     if len(articles) == 0:
         print('No articles found')
@@ -21,7 +22,7 @@ def get_from_europa():
         page_articles = []
 
         for article in articles:
-            title = str(article.find('a').get_text())
+            title = str(article.select('.article-title')[0].get_text())
             title = title.replace('&period', '.')\
                 .replace('&comma',  ',')\
                 .replace('&abreve', 'ă')\
@@ -34,35 +35,26 @@ def get_from_europa():
                 .replace('&vert', '|')\
                 .strip()
 
-            link = 'https://ec.europa.eu/'+str(article.find('a', href=True).attrs['href'])
+            link = 'https://www.digi24.ro'+str(article.find('a', href=True).attrs['href'])
 
             content_page = requests.get(link, 'html/parse')
             content = BeautifulSoup(content_page.content, features='html.parser')
 
-            article_area = content.find('div', {'class': 'panel-body content'})
 
-            thumb = article_area.find('img', src=True).attrs['src']
+            thumb = content.find('figure', {'class': 'article-thumb'}).find('img', src=True).attrs['src']
 
             article_content = ''
-            for p in article_area.find_all('p'):
-                article_content += ' ' + p.get_text().strip()
+            for c in content.find_all('p'):
+                article_content += ' ' + c.get_text().strip()
 
-            tldr = process_content(article_content, 3)
+            tldr, keywords = process_content(article_content, 3)
             if len(tldr) > 255:
                 tldr = tldr[:255] + '...'
 
-            publish_date = article_area.find('span', {'class': 'date-display-single'}).get_text().strip()
-            
-            page_articles.append({
-                 "source": link,
-                 "publish_date": publish_date, 
-                 "title": title, 
-                 "img_source": thumb, 
-                 "tldr": tldr, 
-                 "bias": 0.1,
-                 "clicks": 0
-                })
-    
-    return page_articles
+            publish_date = content.find('time').get_text().strip()
 
-#get_from_europa()
+            if link and title and tldr:
+                page_articles.append(Article(link, publish_date, title, thumb, tldr, keywords, 0.1))
+                
+    print('articles from digi: ', len(page_articles))
+    return page_articles

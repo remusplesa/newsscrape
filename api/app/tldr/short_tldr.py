@@ -26,8 +26,8 @@ def process_content(text: str, no_of_sentences: int):
         words = s.split(' ')
         for word in words:
             if word in best:
-                if s not in short and len(short) <= no_of_sentences:
+                if s not in short and ( len(short) <= no_of_sentences ):
                     short.append(org_sentence[i]+'.')
                     
     tldr=' '.join(short)
-    return tldr
+    return tldr, best

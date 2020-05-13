@@ -3,9 +3,10 @@ from bs4 import BeautifulSoup
 from datetime import datetime
 import sys
 sys.path.append('..')
-from tldr.short_tldr import process_content
+from api.app.tldr.short_tldr import process_content
+from article import Article
 
-def get_from_europa():
+def get_from_mediafax():
     website_address = 'https://www.mediafax.ro/ultimele-stiri/'
     # 50 articles per page
     website = requests.get(website_address, 'html/parse')
@@ -44,7 +45,7 @@ def get_from_europa():
             article_area = content.find('div', {'class': 'news tabs-container'})
             try:
                 thumb = article_area.find('div', {'class': 'ArticleImageContainer'}).find('img').attrs['data-src']
-            except AttributeError:
+            except:
                 thumb = ''
 
             article_content = ''
@@ -56,24 +57,14 @@ def get_from_europa():
                 continue
 
 
-            tldr = process_content(article_content, 3)
+            tldr, keywords = process_content(article_content, 3)
             if len(tldr) > 255:
                 tldr = tldr[:255] + '...'
 
             publish_date = article_area.find('dd', {'class': 'date'}).get_text().strip()
-            print('\n Titlu:' + title,'\nThumb: ',thumb,'\n Link:',link,'\n articleContent: ',article_content,'\n Tldr:',tldr,'\n Publish Date:',publish_date ,'\n')
+            #print('\n Titlu:' + title,'\nThumb: ',thumb,'\n Link:',link,'\n articleContent: ',article_content,'\n Tldr:',tldr,'\n Publish Date:',publish_date ,'\n')
+            if link and title and tldr:
+                page_articles.append(Article(link, publish_date, title, thumb, tldr, keywords, 0.1))
 
-"""            
-            page_articles.append({
-                 "source": link,
-                 "publish_date": publish_date, 
-                 "title": title, 
-                 "img_source": thumb, 
-                 "tldr": tldr, 
-                 "bias": 0.1,
-                 "clicks": 0
-                })
-    
-    return page_articles"""
-
-get_from_europa()
+    print('articles from mediafax: ', len(page_articles))
+    return page_articles

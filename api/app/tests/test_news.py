@@ -4,7 +4,7 @@ import sys
 import sys, os
 sys.path.insert(0, os.path.abspath('.'))
 
-from ..app.news import app
+from ..app.main import app
 
 
 client = TestClient(app)
