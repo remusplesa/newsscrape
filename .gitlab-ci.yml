@@ -1,0 +1,21 @@
+image: "python:3.8-alpine"
+
+cache:
+  paths:
+    - .cache/pip
+    - venv/
+
+before_script:
+  - python -V  # Print out python version for debugging
+  - python -m venv venv
+  - pip install -r requirements.txt
+  - source venv/bin/activate
+
+stages:
+    - Static Analysis
+
+flake8:
+  stage: Static Analysis
+  script:
+    - flake8 api/app/
+    - flake8 scrape/

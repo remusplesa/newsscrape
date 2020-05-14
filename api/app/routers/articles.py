@@ -1,10 +1,10 @@
-from fastapi import APIRouter, Body, HTTPException
+from fastapi import APIRouter, Body
 from pymongo import MongoClient
 import pymongo
 from datetime import datetime
 from bson.objectid import ObjectId
+from pydantic import BaseModel, Field
 
-from pydantic import BaseModel, Field, validator
 
 router = APIRouter()
 
@@ -16,7 +16,8 @@ class Article(BaseModel):
     img_source: str = Field(None, description="Image source")
     tldr: str = Field(..., description="Article body")
     keywords: list
-    bias: float = Field(None, gt=0, le=1, description="Bias of the news article")
+    bias: float = Field(
+        None, gt=0, le=1, description="Bias of the news article")
     clicks: int
     reports: int
     hidden: bool
@@ -61,7 +62,10 @@ def get_articles(pageNumber: int = 0, limit: int = 10):
     for art in output:
         art["_id"] = str(art["_id"])
 
-    return {"next_page": next_url, "previous_page": prev_url, "articles": output}
+    return {
+        "next_page": next_url,
+        "previous_page": prev_url,
+        "articles": output}
 
 
 @router.post("/articles/")
@@ -69,7 +73,8 @@ def post_article(article: Article = Body(...)):
     """
     # Insert a new document in the db after object validation.
     * Insert article in the articles collection
-    * Insert keyword in the keywords collection (each keyword gets a document / day)
+    * Insert keyword in the keywords collection
+    (each keyword gets a document / day)
     """
     keywords_to_insert = article.dict()["keywords"]
     for word in keywords_to_insert:
@@ -97,5 +102,8 @@ def uptdate_article(article_id: str, to_update: str):
     if to_update not in ["clicks", "reports"]:
         # TODO return error code
         return {"error": to_update + " is not a method"}
-    res = articles.update_one({"_id": ObjectId(article_id)}, {"$inc": {to_update: 1}})
+
+    articles.update_one({"_id": ObjectId(article_id)}, {
+                              "$inc": {to_update: 1}})
+
     return {"updated_article": article_id, "incremented": to_update}

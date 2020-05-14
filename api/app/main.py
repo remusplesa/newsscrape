@@ -1,15 +1,8 @@
-from fastapi import FastAPI, Body
-from fastapi.middleware.cors import CORSMiddleware
-import pymongo
-from pymongo import MongoClient
-from bson.objectid import ObjectId
-from bson.json_util import dumps
-from pydantic import BaseModel, Field, validator
-from datetime import datetime
-import sys
-
-sys.path.append("..")
 from app.routers import articles, tldr, keywords
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+import sys
+sys.path.append("..")
 
 
 app = FastAPI()
@@ -33,7 +26,8 @@ def read_root():
     """
     return {
         "hello there": "this is the news API",
-        "purpose": "get the latest news articles in Ro. or study statistics about their content",
+        "purpose": "get the latest news articles in Ro. or\
+                    study statistics about their content",
     }
 
 

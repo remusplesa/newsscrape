@@ -1,12 +1,15 @@
-from fastapi import APIRouter, Body, HTTPException, APIRouter
-from pydantic import BaseModel, Field, validator
+from fastapi import APIRouter, Body
+from pydantic import BaseModel, Field
 from app.tldr.short_tldr import process_content
 
 
 class Tldr(BaseModel):
-    sentences: int = Field(..., gt=0, description="Number of sentences to be returned")
+    sentences: int = Field(..., gt=0,
+                           description="Number of sentences to be returned")
     text: str = Field(
-        ..., max_length=8000, description="Original text limited to (8000 characters)"
+        ...,
+        max_length=8000,
+        description="Original text limited to (8000 characters)"
     )
 
 

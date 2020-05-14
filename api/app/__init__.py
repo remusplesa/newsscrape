@@ -1,1 +1,1 @@
-__all__=['news','tldr']
+__all__ = ['news', 'tldr']

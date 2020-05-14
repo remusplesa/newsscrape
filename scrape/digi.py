@@ -1,17 +1,18 @@
+from article import Article
+from api.app.tldr.short_tldr import process_content
 import requests
 from bs4 import BeautifulSoup
-from datetime import datetime
 import sys
 sys.path.append('..')
-from api.app.tldr.short_tldr import process_content
-from article import Article
+
 
 def get_from_digi():
     website_address = 'https://www.digi24.ro/ultimele-stiri'
     # 50 articles per page
     website = requests.get(website_address, 'html/parse')
 
-    soup = BeautifulSoup(website.content, features='html.parser', from_encoding="utf-8")
+    soup = BeautifulSoup(
+        website.content, features='html.parser', from_encoding="utf-8")
     articles = soup.find_all('article', class_='article brdr')
 
     if len(articles) == 0:
@@ -35,13 +36,15 @@ def get_from_digi():
                 .replace('&vert', '|')\
                 .strip()
 
-            link = 'https://www.digi24.ro'+str(article.find('a', href=True).attrs['href'])
+            link = 'https://www.digi24.ro' + \
+                str(article.find('a', href=True).attrs['href'])
 
             content_page = requests.get(link, 'html/parse')
-            content = BeautifulSoup(content_page.content, features='html.parser')
-
-
-            thumb = content.find('figure', {'class': 'article-thumb'}).find('img', src=True).attrs['src']
+            content = BeautifulSoup(
+                content_page.content, features='html.parser')
+            thumb = content.find('figure', {'class': 'article-thumb'})\
+                .find('img', src=True)\
+                .attrs['src']
 
             article_content = ''
             for c in content.find_all('p'):
@@ -54,7 +57,17 @@ def get_from_digi():
             publish_date = content.find('time').get_text().strip()
 
             if link and title and tldr:
-                page_articles.append(Article(link, publish_date, title, thumb, tldr, keywords, 0.1))
-                
+                page_articles.append(
+                    Article(
+                        link,
+                        publish_date,
+                        title,
+                        thumb,
+                        tldr,
+                        keywords,
+                        0.1
+                    )
+                )
+
     print('articles from digi: ', len(page_articles))
     return page_articles
