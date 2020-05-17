@@ -1,8 +1,9 @@
+import sys
+sys.path.append("..")
 from app.routers import articles, tldr, keywords
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-import sys
-sys.path.append("..")
+
 
 
 app = FastAPI()
