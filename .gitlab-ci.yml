@@ -17,5 +17,5 @@ stages:
 flake8:
   stage: Static Analysis
   script:
-    - flake8 api/app/
-    - flake8 scrape/
+    - flake8 api/app/ --ignore E402
+    - flake8 scrape/ --ignore E402
