@@ -1,6 +1,6 @@
 from nltk.tokenize import word_tokenize
 from nltk.corpus import stopwords
-from nltk import corpus #to modify
+from nltk import corpus  # to modify
 from nltk.stem.snowball import SnowballStemmer
 from nltk.probability import FreqDist
 
@@ -28,7 +28,7 @@ def process_content(text: str, no_of_sentences: int):
         for word in words:
             if word in best:
                 if s not in short and (len(short) <= no_of_sentences):
-                    short.append(org_sentence[i]+'.')
+                    short.append(org_sentence[i] + '.')
 
     tldr = ' '.join(short)
     return tldr, best
