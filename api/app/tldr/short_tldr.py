@@ -43,11 +43,13 @@ class Tldr_content():
         self.stopwords = corpus.stopwords.words(self.language)
 
     def set_text(self, text: str):
-        if not text: raise ValueError('Should have text & text validation')
+        if not text:
+            raise ValueError('Should have text & text validation')
         self.text = text
 
     def set_no_of_sentences(self, no_of_sentences):
-        if not no_of_sentences: raise ValueError('Should have a valid value')
+        if not no_of_sentences:
+            raise ValueError('Should have a valid value')
         self.no_of_sentences = no_of_sentences
 
     def short(self):
@@ -73,7 +75,7 @@ class Tldr_content():
             for word in words:
                 if word in best:
                     if s not in short and (len(short) <= self.no_of_sentences):
-                        short.append(org_sentence[i]+'.')
+                        short.append(org_sentence[i] + '.')
 
         tldr = ' '.join(short)
         return tldr, best

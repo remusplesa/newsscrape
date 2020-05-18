@@ -104,6 +104,7 @@ def uptdate_article(article_id: str, to_update: str):
         return {"error": to_update + " is not a method"}
 
     articles.update_one({"_id": ObjectId(article_id)}, {
-                              "$inc": {to_update: 1}})
+                        "$inc": {to_update: 1}}
+                        )
 
     return {"updated_article": article_id, "incremented": to_update}
