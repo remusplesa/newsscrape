@@ -1,6 +1,6 @@
 import sys
 sys.path.append('..')
-from article import Article
+from scrape import article as art
 from api.app.tldr.short_tldr import Tldr_content
 import requests
 import threading
@@ -8,10 +8,26 @@ from bs4 import BeautifulSoup
 
 
 def trim_text(text):
+    if not type(text) == str:
+        return TypeError
     if len(text) > 255:
         return text[:255] + '...'
     else:
         return text
+
+
+def get_text(content):
+    article_content = ''
+    for p in content.find_all('p'):
+        article_content += ' ' + p.get_text().strip()
+    return article_content
+
+
+def get_thumbnail(content):
+    thumbnail = content.find('img', src=True).attrs['src']
+    if len(thumbnail) == 0:
+        thumbnail = 'video'
+    return thumbnail
 
 
 def get_articles(article, page_articles):
@@ -34,14 +50,11 @@ def get_articles(article, page_articles):
     content_page = requests.get(link, 'html/parse')
     content = BeautifulSoup(
         content_page.content, features='html.parser')
-
     article_area = content.find('div', {'class': 'panel-body content'})
 
-    thumb = article_area.find('img', src=True).attrs['src']
+    thumb = get_thumbnail(article_area)
 
-    article_content = ''
-    for p in article_area.find_all('p'):
-        article_content += ' ' + p.get_text().strip()
+    article_content = get_text(article_area)
 
     tl = Tldr_content(article_content, 3)
     tldr, keywords = tl.short()
@@ -53,7 +66,7 @@ def get_articles(article, page_articles):
 
     if link and title and tldr:
         page_articles.append(
-            Article(
+            art.Article(
                 link,
                 publish_date,
                 title,
@@ -73,8 +86,8 @@ def get_from_europa(website_address='https://ec.europa.eu/romania/news_ro'):
     '''
     try:
         website = requests.get(website_address, 'html/parse')
-    except requests.exceptions.RequestException as e:
-        print('%s while connecting to %s' % (e, website_address))
+    except requests.exceptions.RequestException:
+        return ('Error while connecting to %s' % (website_address))
 
     soup = BeautifulSoup(
         website.content, features='html.parser', from_encoding="utf-8")

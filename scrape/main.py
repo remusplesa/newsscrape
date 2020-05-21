@@ -19,7 +19,6 @@ def post_article(article):
 
 
 def scrape():
-
     articles = get_from_digi()
     articles += get_from_europa()
     articles += get_from_mediafax()
@@ -31,6 +30,7 @@ def scrape():
 
     for thread in threads:
         thread.join()
+
 
 if __name__ == '__main__':
     scrape()

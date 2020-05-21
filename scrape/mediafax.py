@@ -1,6 +1,6 @@
 import sys
 sys.path.append('..')
-from article import Article
+from scrape import article as art
 from api.app.tldr.short_tldr import Tldr_content
 import requests
 import threading
@@ -8,10 +8,36 @@ from bs4 import BeautifulSoup
 
 
 def trim_text(text):
+    if not type(text) == str:
+        return TypeError
     if len(text) > 255:
         return text[:255] + '...'
     else:
         return text
+
+
+def get_text(content):
+    article_content = ''
+    try:
+        for p in content\
+                .find('div', {'id': 'article_text_content'})\
+                .find('div', {'class': 'just-article-content'})\
+                .find_all('p'):
+            article_content += ' ' + p.get_text().strip()
+    except AttributeError:
+        pass
+    return article_content
+
+
+def get_thumbnail(content):
+    thumbnail = content\
+        .find('div', {'class': 'ArticleImageContainer'})\
+        .find('img')\
+        .attrs['data-src']
+
+    if len(thumbnail) == 0:
+        thumbnail = 'video'
+    return thumbnail
 
 
 def get_articles(article, page_articles):
@@ -33,37 +59,24 @@ def get_articles(article, page_articles):
     content_page = requests.get(link, 'html/parse')
     content = BeautifulSoup(
         content_page.content, features='html.parser')
-
     article_area = content.find(
         'div', {'class': 'news tabs-container'})
-    try:
-        thumb = article_area\
-            .find('div', {'class': 'ArticleImageContainer'})\
-            .find('img')\
-            .attrs['data-src']
-    except AttributeError:
-        thumb = 'video'
 
-    article_content = ''
-    try:
-        for p in article_area\
-                .find('div', {'id': 'article_text_content'})\
-                .find('div', {'class': 'just-article-content'})\
-                .find_all('p'):
-            article_content += ' ' + p.get_text().strip()
-    except AttributeError:
-        pass
+    thumb = get_thumbnail(article_area)
 
-    tl = Tldr_content(article_content, 3)
-    tldr, keywords = tl.short()
+    article_content = get_text(article_area)
 
-    tldr = trim_text(tldr)
+    tldr = None
+    if article_content:
+        tl = Tldr_content(article_content, 3)
+        tldr, keywords = tl.short()
+        tldr = trim_text(tldr)
 
     publish_date = article_area.find(
         'dd', {'class': 'date'}).get_text().strip()
     if link and title and tldr:
         page_articles.append(
-            Article(
+            art.Article(
                 link,
                 publish_date,
                 title,
@@ -85,8 +98,8 @@ def get_from_mediafax(
     '''
     try:
         website = requests.get(website_address, 'html/parse')
-    except requests.exceptions.RequestException as e:
-        print('%s while connecting to %s' % (e, website_address))
+    except requests.exceptions.RequestException:
+        return ('Error while connecting to %s' % (website_address))
 
     soup = BeautifulSoup(
         website.content, features='html.parser', from_encoding="utf-8")
