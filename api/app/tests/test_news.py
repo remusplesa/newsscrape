@@ -22,8 +22,6 @@ def test_root():
 
 
 def test_get_articles():
-    response = client.get('/articles')
-    assert response.status_code == 200
     # TODO: no previous page in response for first page
     # TODO: no next page in response for last page
     # TODO: length of response == limit
