@@ -25,6 +25,7 @@ def test_get_articles():
     # TODO: no previous page in response for first page
     # TODO: no next page in response for last page
     # TODO: length of response == limit
+    pass
 
 
 def test_put_articles():
