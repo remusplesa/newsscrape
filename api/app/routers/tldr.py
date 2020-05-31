@@ -19,7 +19,9 @@ router = APIRouter()
 @router.post("/tldr")
 def to_tldr(text: Tldr = Body(...)):
     """
-    # TODO: Return a Tldr for any posted(?) text
+    # Return a Tldr for any given text
     """
     out = process_content(text.text, text.sentences)
-    return {"tldr": out}
+    return {
+        "tldr": out
+    }
