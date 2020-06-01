@@ -5,7 +5,7 @@ from bson.objectid import ObjectId
 
 def get_articles_mongo(
     articles_collection: pymongo.collection,
-    pageNumber: int = 0,
+    pageNumber: int = 1,
     limit: int = 10
 ):
     start_index = ((pageNumber - 1) * limit) if pageNumber > 0 else 0
