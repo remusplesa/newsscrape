@@ -24,5 +24,4 @@ flake8:
 pytest:
   stage: Unit testing
   script:
-    - pytest api/app -p no:warnings -v
-    - pytest scrape -v
+    - pytest . -p no:warnings -v
