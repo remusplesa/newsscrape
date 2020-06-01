@@ -51,7 +51,7 @@ def test_post_articles():
             "reports": 0,
             "hidden": False,
             "collection_date": 20200505
-        }
+    }
 
     res = articles_db.post_articles_mongo(
         articles_collection,
@@ -74,18 +74,19 @@ def test_post_articles():
 def test_update_article():
     articles_collection = mongomock.MongoClient().db.collection
     article_to_insert = {
-            "source": "https://www.digi24.ro/",
-            "publish_date": "25.04.2020 15:15",
-            "title": "Demo 2",
-            "img_source": "none",
-            "tldr": "Test article content",
-            "keywords": ["a", "b", "c"],
-            "biased": 0.2,
-            "clicks": 0,
-            "reports": 0,
-            "hidden": False,
-            "collection_date": 20200505
-        }
+        "source": "https://www.digi24.ro/",
+        "publish_date": "25.04.2020 15:15",
+        "title": "Demo 2",
+        "img_source": "none",
+        "tldr": "Test article content",
+        "keywords": ["a", "b", "c"],
+        "biased": 0.2,
+        "clicks": 0,
+        "reports": 0,
+        "hidden": False,
+        "collection_date": 20200505
+    }
+
     articles_collection.insert_one(article_to_insert)
     found_article = articles_collection.find_one({})
 
