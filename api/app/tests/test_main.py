@@ -22,28 +22,20 @@ def test_root():
 
 
 def test_get_articles():
-    # TODO: no previous page in response for first page
-    # TODO: no next page in response for last page
-    # TODO: length of response == limit
+    # TODO: check error handling
     pass
 
 
 def test_put_articles():
-    # TODO: check if click increment works
-    # TODO: check if report increment works
-    # TODO: check if article is hidden after x reports
     # TODO: check error handling
     pass
 
 
 def test_post_articles():
-    # TODO: validate the body structure
     # TODO: error handling
     pass
 
 
 def test_post_tldr():
-    # TODO: validate request body
-    # TODO: validate response body
-    # TODO: validate response body.text == req.sentences
+    # TODO: check error handling
     pass

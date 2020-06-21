@@ -52,7 +52,6 @@ def post_new_article(article: Article = Body(...)):
     * Insert keyword in the keywords collection
     (each keyword gets a document / day)
     """
-    # keywords_to_insert = article.dict()["keywords"]
     article_to_insert = article.dict()
 
     res = articles_db.post_articles_mongo(

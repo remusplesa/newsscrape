@@ -3,6 +3,7 @@ from nltk.corpus import stopwords
 from nltk import corpus  # to modify
 from nltk.stem.snowball import SnowballStemmer
 from nltk.probability import FreqDist
+import re
 
 
 def process_content(text: str, no_of_sentences: int):
@@ -52,30 +53,63 @@ class Tldr_content():
             raise ValueError('Should have a valid value')
         self.no_of_sentences = no_of_sentences
 
+
     def short(self):
-        words = word_tokenize(self.text)
-        new_words = [word for word in words if word.isalnum()]
-        new_content = [
-            word for word in new_words if word not in self.stopwords]
-        stems = [self.stemmer.stem(word) for word in new_content]
-        fdist = FreqDist(stems)
+        def calc_score(best_words, sentence, index):
+            sentence = sentence.replace('.', '').replace('\n', '')
+            stemmer = SnowballStemmer(self.language)
 
-        sentence = self.text.lower().split('.')
-        org_sentence = self.text.split('.')
+            score = 0
+            
+            sentence_words = sentence.split(' ')
+            stemmed_words = [
+                stemmer.stem(word)
+                for word in sentence_words
+            ]
+            for word in best_words:
+                if word in stemmed_words:
+                    score += 1
+            return [index, sentence, score]
 
-        short = []
-        best = []
+        def Sort(list_to_sort, reverse, pos):  
+            list_to_sort.sort(key = lambda x: x[pos], reverse=reverse) 
+            return list_to_sort
 
-        for pair in fdist.most_common(5):
+        sentences = re.split(r'(?<!\w\.\w.)(?<![A-Z][a-z]\.)(?<=\.|\?)\s', self.text)
+        words = [
+            word.lower()
+            for word in word_tokenize(self.text)
+            if word.isalnum()
+        ]
+        ro_stopwords = stopwords.words(self.language)
+        ro_stopwords.append('și')
+        words_wo_stop = [
+            word
+            for word in words
+            if word not in ro_stopwords
+        ]
+        stemmer = SnowballStemmer(self.language)
+
+        stems = [
+            stemmer.stem(word)
+            for word in words_wo_stop
+        ]
+        freq = FreqDist(stems)
+        best= []
+        for pair in freq.most_common(5):
             best.append(pair[0])
 
-        print('best: ', best)
-        for (i, s) in enumerate(sentence):
-            words = s.split(' ')
-            for word in words:
-                if word in best:
-                    if s not in short and (len(short) <= self.no_of_sentences):
-                        short.append(org_sentence[i] + '.')
+        res = []
+        index = 0
+        for s in sentences:
+            res.append(calc_score(best, s, index))
+            index += 1
 
-        tldr = ' '.join(short)
-        return tldr, best
+        top = Sort(res, 1, 2)
+        out = Sort(top[:self.no_of_sentences], 0, 0)
+        short = []
+        for sentence in out:
+            short.append(sentence[1])
+            
+        final_short = '. '.join(short)
+        return final_short, best
