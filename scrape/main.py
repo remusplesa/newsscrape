@@ -5,6 +5,7 @@ from europa import get_from_europa
 from digi import get_from_digi
 import requests
 import threading
+import time
 
 
 def post_article(article):
@@ -33,4 +34,6 @@ def scrape():
 
 
 if __name__ == '__main__':
-    scrape()
+    while True:
+        scrape()
+        time.sleep(300)

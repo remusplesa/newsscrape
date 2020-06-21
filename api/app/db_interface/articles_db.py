@@ -45,24 +45,33 @@ def post_articles_mongo(
     keywords_collection: pymongo.collection,
     article
 ):
-    keywords_to_insert = article['keywords']
-    for word in keywords_to_insert:
-        keywords_collection.update_one(
-            {
-                "$and": [
-                    {"word": word},
-                    {"date": int(datetime.now().strftime("%Y%m%d"))},
-                ]
-            },
-            {"$inc": {"count": 1}},
-            upsert=True,
-        )
+    exists = True if articles_collection.find_one({
+        "source": article["source"]
+    }) is not None else False
+    print(exists, "exists?")
+    if exists is False:
+        keywords_to_insert = article['keywords']
+        for word in keywords_to_insert:
+            keywords_collection.update_one(
+                {
+                    "$and": [
+                        {"word": word},
+                        {"date": int(datetime.now().strftime("%Y%m%d"))},
+                    ]
+                },
+                {"$inc": {"count": 1}},
+                upsert=True,
+            )
 
-    res = articles_collection.insert_one(article)
-    return {
-        "inserted": str(res.inserted_id),
-        "inserted_keywords": keywords_to_insert
-    }
+        res = articles_collection.insert_one(article)
+        return {
+            "inserted": str(res.inserted_id),
+            "inserted_keywords": keywords_to_insert
+        }
+    else:
+        return {
+            "already exists": article["source"]
+        }
 
 
 def update_articles_mongo(articles_collection, article_id, to_update):

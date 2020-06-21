@@ -2,6 +2,7 @@ from fastapi import APIRouter, Body
 from pymongo import MongoClient
 from pydantic import BaseModel, Field
 from app.db_interface import articles_db
+from app.credentials import mongo_password
 
 
 class Article(BaseModel):
@@ -21,7 +22,8 @@ class Article(BaseModel):
     # TODO pydantic validators
 
 
-client = MongoClient("mongodb://localhost:27017/")
+client = MongoClient(
+    "mongodb://admin:" + mongo_password + "@mongo:27017/?authSource=newsApp")
 db = client.newsApp
 articles = db.articles
 keywords = db.keywords

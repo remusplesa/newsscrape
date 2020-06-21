@@ -7,7 +7,7 @@ import threading
 from bs4 import BeautifulSoup
 
 
-def trim_text(text, length = 255):
+def trim_text(text, length=255):
     if not type(text) == str:
         return TypeError
     if len(text) > length:

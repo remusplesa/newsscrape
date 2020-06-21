@@ -53,14 +53,13 @@ class Tldr_content():
             raise ValueError('Should have a valid value')
         self.no_of_sentences = no_of_sentences
 
-
     def short(self):
         def calc_score(best_words, sentence, index):
             sentence = sentence.replace('.', '').replace('\n', '')
             stemmer = SnowballStemmer(self.language)
 
             score = 0
-            
+
             sentence_words = sentence.split(' ')
             stemmed_words = [
                 stemmer.stem(word)
@@ -71,11 +70,14 @@ class Tldr_content():
                     score += 1
             return [index, sentence, score]
 
-        def Sort(list_to_sort, reverse, pos):  
-            list_to_sort.sort(key = lambda x: x[pos], reverse=reverse) 
+        def Sort(list_to_sort, reverse, pos):
+            list_to_sort.sort(key=lambda x: x[pos], reverse=reverse)
             return list_to_sort
 
-        sentences = re.split(r'(?<!\w\.\w.)(?<![A-Z][a-z]\.)(?<=\.|\?)\s', self.text)
+        sentences = re.split(
+            r'(?<!\w\.\w.)(?<![A-Z][a-z]\.)(?<=\.|\?)\s',
+            self.text
+        )
         words = [
             word.lower()
             for word in word_tokenize(self.text)
@@ -95,7 +97,7 @@ class Tldr_content():
             for word in words_wo_stop
         ]
         freq = FreqDist(stems)
-        best= []
+        best = []
         for pair in freq.most_common(5):
             best.append(pair[0])
 
@@ -110,6 +112,6 @@ class Tldr_content():
         short = []
         for sentence in out:
             short.append(sentence[1])
-            
+
         final_short = '. '.join(short)
         return final_short, best
