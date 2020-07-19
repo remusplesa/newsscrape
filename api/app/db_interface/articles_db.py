@@ -40,6 +40,27 @@ def get_articles_mongo(
     }
 
 
+def get_top_articles_mongo(
+    articles_collection: pymongo.collection,
+    limit: int,
+    date: int
+):
+    query = {"collection_date": date}
+
+    output = [
+        article
+        for article in articles_collection.find(query, {"_id": 0})
+        .sort("clicks", pymongo.DESCENDING)
+        .limit(limit)
+    ]
+
+    return {
+        "limit": limit,
+        "date": date,
+        "results": output,
+    }
+
+
 def post_articles_mongo(
     articles_collection: pymongo.collection,
     keywords_collection: pymongo.collection,

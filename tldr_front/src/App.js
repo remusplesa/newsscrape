@@ -1,6 +1,5 @@
 import React from 'react';
 import Container from './components/Container.js'
-import './App.scss';
 
 function App() {
   return (

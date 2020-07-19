@@ -1,7 +1,7 @@
 import sys
 sys.path.append('..')
 from scrape import article as art
-from api.app.tldr.short_tldr import Tldr_content
+from scrape.short_tldr import Tldr_content
 import requests
 from bs4 import BeautifulSoup
 import threading

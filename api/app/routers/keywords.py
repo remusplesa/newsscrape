@@ -37,13 +37,11 @@ def get_keyword_info(
 @router.get("/top_keywords/")
 def get_top_keywords(
     limit: int = 10,
-    date: int = None
+    date: int = int(datetime.now().strftime("%Y%m%d"))
 ):
     """
     # Get most used [n] keywords in a day
     """
-    if date is None:
-        date = int(datetime.now().strftime("%Y%m%d"))
 
     res = keywords_db.get_top_keywords(
         keywords,

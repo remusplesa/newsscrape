@@ -1,51 +1,134 @@
-@import './variables';
+@import "./variables";
 
 .container {
-    display: flex;
-    background-color: $white;
-    justify-content: center;
-    min-height: 100vh;
-    h2{
-        color: $white;
-    }
+  display: flex;
+  background-color: $white;
+  justify-content: center;
+  min-height: 100vh;
+  h2 {
+    color: $white;
+  }
 }
 
 .main-container {
-    display: flex;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  background-color: $white;
+  @media (min-width: $mobile) {
+    width: 300px;
+  }
+  @media (min-width: $tablet) {
+    width: 550px;
+  }
+  @media (min-width: $desktop) {
+    width: 850px;
+  }
+  @media (min-width: $desktop-large) {
+    width: 1200px;
+  }
+  a {
+    text-decoration: none;
+    color: darken($color: $grey, $amount: 30);
+  }
+}
+
+header {
+  display: flex;
+  justify-content: space-between;
+  padding: 0px 30px;
+  background-color: darken($color: $grey, $amount: 25);
+  margin-bottom: 5px;
+}
+
+.analytics {
+  display: flex;
+  flex-direction: row;
+  background-color: $white;
+  box-shadow: 5px 5px 25px lighten($color: $grey,$amount: 35);
+  @media (min-width: $mobile) {
     flex-direction: column;
-    justify-content: flex-start;
-    background-color: $blue;
-    @media (min-width: $mobile) {
-        width: 300px;
-    }
-    @media (min-width: $tablet) {
-        width: 550px;
-    }
-    @media (min-width: $desktop) {
-        width: 850px;
-    }
-}
-
-header{
-    display: flex;
-    justify-content: center;
-    width: 100%;
-    background-color: $blue;
-}
-
-.analytics{
-    display: flex;
+  }
+  @media (min-width: $tablet) {
+    flex-direction: column;
+  }
+  @media (min-width: $desktop) {
     flex-direction: row;
-    width: 100%;
-    height: 300px;
-    background-color: $light-blue;
+  }
 }
 
 .barplot {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-around;
-    align-items: flex-start;
-    height: 100%;
-    padding-left: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  width: 100%;
+  margin: 10px;
+  @media (min-width: $mobile) {
+    padding: 30px 0px;
+  }
+  @media (min-width: $tablet) {
+    padding: 30px 0px;
+  }
+  @media (min-width: $desktop) {
+    padding: 0px 0px;
+  }
+}
+
+.plot-area {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  width: 100%;
+  @media (min-width: $desktop) {
+    width: 50%;
+  }
+  h3 {
+      align-self: center;
+  }
+}
+
+.bar {
+  display: flex;
+  flex-direction: column;
+  align-content: flex-start;
+  justify-content: center;
+  height: 15px;
+  background-color: $vivid-mint;
+  margin-top: 5px;
+  padding: 4px 2px;
+  box-shadow: 5px 5px 15px darken($color: $mint, $amount: 20);
+  border-radius: 999px;
+  &:hover {
+    background-color: darken($color: gold, $amount: 15);
+  }
+  span {
+    margin-left: 10px;
+  }
+}
+
+.newsBox {
+  width: 100%;
+
+  @media (min-width: $desktop) {
+    width: 50%;
+  }
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  align-items: center;
+  padding: 20px 0px;
+
+  div {
+    padding: 5px;
+    margin: 5px;
+    width: 90%;
+    background-color: lighten($color: $grey, $amount: 40);
+    &:hover{
+        background-color: lighten($color: $grey, $amount: 30);
+    }
+  }
+  h4 {
+    margin: 0;
+  }
 }

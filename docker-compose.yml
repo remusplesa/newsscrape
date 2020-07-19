@@ -1,13 +1,21 @@
 version: '3'
 services:
-        app:
-                container_name: news-scrape
+        news-scrape-api:
+                build: ./api
+                container_name: news-scrape-api
                 restart: always
-                build: .
                 ports:
                         - '8000:80'
                 links:
                         - mongo
+        scraper:
+                build: ./scrape
+                container_name: scrapers
+                restart: always
+                ports:
+                        - '8001:80'
+                links:
+                        - news-scrape-api
         mongo:
                 container_name: mongo
                 image: mongo

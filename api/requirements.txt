@@ -1,0 +1,13 @@
+fastapi
+uvicorn
+nltk
+#nltk.download('punkt'&'stopwords')
+pydantic
+pymongo
+starlette==0.13.2
+requests
+beautifulsoup4
+mongomock
+flake8
+pylint
+pytest

@@ -9,7 +9,7 @@ import time
 
 
 def post_article(article):
-    url = 'http://localhost:8000/articles/'
+    url = 'http://news-scrape-api/articles/'
 
     response = requests.post(
         url,

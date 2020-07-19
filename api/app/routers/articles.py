@@ -3,6 +3,7 @@ from pymongo import MongoClient
 from pydantic import BaseModel, Field
 from app.db_interface import articles_db
 from app.credentials import mongo_password
+from datetime import datetime
 
 
 class Article(BaseModel):
@@ -33,7 +34,10 @@ router = APIRouter()
 
 
 @router.get("/articles/")
-def get_articles_pagination(pageNumber: int = 0, limit: int = 10):
+def get_articles_pagination(
+    pageNumber: int = 0,
+    limit: int = 10
+):
     """
     # Get articles with pagination
     """
@@ -41,6 +45,24 @@ def get_articles_pagination(pageNumber: int = 0, limit: int = 10):
         articles,
         pageNumber,
         limit
+    )
+
+    return res
+
+
+@router.get("/top_articles/")
+def get_top_articles(
+    limit: int = 5,
+    date: int = int(datetime.now().strftime("%Y%m%d"))
+):
+    """
+    # Get top N articles sorted by clicks
+    """
+
+    res = articles_db.get_top_articles_mongo(
+        articles,
+        limit,
+        date
     )
 
     return res
@@ -65,7 +87,10 @@ def post_new_article(article: Article = Body(...)):
 
 
 @router.put("/articles/{article_id}")
-def increment_article_field(article_id: str, to_update: str):
+def increment_article_field(
+    article_id: str,
+    to_update: str
+):
     """
     ## Increment the click count of an article
     ## Increment the report count and change the state to hidden
